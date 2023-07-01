@@ -31,14 +31,61 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         newsAdapter = NewsAdapter()
+        val newsService = retrofit.create(NewsService::class.java)
 
         binding.newsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = newsAdapter
         }
 
-        val newsService = retrofit.create(NewsService::class.java)
-        newsService.mainFeed().enqueue(object : Callback<NewsRss> {
+        binding.feedChip.setOnClickListener {
+            binding.chipGroup.clearCheck()
+            binding.feedChip.isChecked = true
+
+            newsService.mainFeed().submitList()
+        }
+
+        binding.politicsChip.setOnClickListener {
+            binding.chipGroup.clearCheck()
+            binding.politicsChip.isChecked = true
+
+            newsService.politicsNews().submitList()
+        }
+
+        binding.economyChip.setOnClickListener {
+            binding.chipGroup.clearCheck()
+            binding.economyChip.isChecked = true
+
+            newsService.economyNews().submitList()
+        }
+
+        binding.societyChip.setOnClickListener {
+            binding.chipGroup.clearCheck()
+            binding.societyChip.isChecked = true
+
+            newsService.societyNews().submitList()
+        }
+
+        binding.itChip.setOnClickListener {
+            binding.chipGroup.clearCheck()
+            binding.itChip.isChecked = true
+
+            newsService.itNews().submitList()
+        }
+
+        binding.sportsChip.setOnClickListener {
+            binding.chipGroup.clearCheck()
+            binding.sportsChip.isChecked = true
+
+            newsService.sportsNews().submitList()
+        }
+
+        binding.feedChip.isChecked = true
+        newsService.mainFeed().submitList()
+    }
+
+    private fun Call<NewsRss>.submitList() {
+        enqueue(object : Callback<NewsRss> {
             override fun onResponse(call: Call<NewsRss>, response: Response<NewsRss>) {
 //                Log.e("MainActivity", "${response.body()?.channel?.items}")
 
@@ -56,7 +103,7 @@ class MainActivity : AppCompatActivity() {
                             val ogImageNode = elements.find { node ->
                                 node.attr("property") == "og:image"
                             }
-        //                    val imageurl = ogImageNode?.attr("content")
+                            //                    val imageurl = ogImageNode?.attr("content")
 
                             newsModel.imageUrl = ogImageNode?.attr("content")
 
@@ -70,8 +117,6 @@ class MainActivity : AppCompatActivity() {
                         }
                     }.start()
                 }
-
-
 //                newsAdapter.submitList(response.body()?.channel?.items.orEmpty())
             }
 
